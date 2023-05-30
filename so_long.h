@@ -5,15 +5,18 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <fcntl.h>
+#include "libft/libft.h"
 
 #define BUFFER_SIZE 100000
 typedef struct s_game
 {
-	char **map;
-	int len;
-	char *name;
-}	t_game;
+	char	**map;
+	char	**map2;
+	int		len;
+	int		p_count;
+	int		e_count;
+	int		c_count;
 
-char	**ft_split(char const *s, char c);
+}	t_game;
 
 #endif
