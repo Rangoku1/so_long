@@ -6,12 +6,31 @@
 /*   By: nelmrabe <nelmrabe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 15:43:37 by nelmrabe          #+#    #+#             */
-/*   Updated: 2023/05/30 17:41:40 by nelmrabe         ###   ########.fr       */
+/*   Updated: 2023/06/12 17:50:52 by nelmrabe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 
 #include "so_long.h"
+
+
+void	floodfill(char **map, int y, int x, int *coin , int *exit)
+{
+	if(coin == 0 && exit == 0)
+		return;
+	if (map[y][x] == '1')
+		return ;
+	if(map[y][x] == 'C')
+			*coin -= 1;
+	if(map[y][x] == 'E')
+			*exit -= 1;
+	map[y][x] = '1';
+	floodfill(map, y, x + 1,coin, exit);
+	floodfill(map, y, x - 1,coin, exit);
+	floodfill(map, y + 1, x,coin, exit);
+	floodfill(map, y - 1, x,coin, exit);
+}
+
 
 int	comparison(char **line)
 {
@@ -63,7 +82,6 @@ void	getmap(int fd, t_game *game)
 	game->map2 = ft_split(buffer, '\n');
 }
 
-
 void	check_rep(t_game *game)
 {
 	int i;
@@ -79,7 +97,11 @@ void	check_rep(t_game *game)
 		while (game->map[i][j])
 		{
 			if (game->map[i][j] == 'P')
+			{
 				game->p_count++;
+				game->p_y = i;
+				game->p_x = j;
+			}
 			else if (game->map[i][j] == 'C')
 				game->c_count++;
 			else if(game->map[i][j] == 'E')
@@ -132,6 +154,15 @@ int main()
 	comparison(game->map);
 	check_components(game);
 	check_rep(game);
+	
+	int cop_coin=game->c_count;
+	int cop_exit=game->e_count;
 
-	printarr(game->map);
+	floodfill(game->map,game->p_y,game->p_x,&cop_coin, &cop_exit);
+	for (int i = 0; i < 5; i++)
+		printf("%s\n",game->map[i]);
+	
+
+	if(cop_coin != 0 || cop_exit != 0)
+		printf("NOT a valid path: %d  \n", game->c2_count);
 }
